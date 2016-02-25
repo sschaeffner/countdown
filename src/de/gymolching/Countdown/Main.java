@@ -7,7 +7,8 @@ public class Main {
 
     public static void main(String[] args) {
         printHelp();
-        new CountdownController(600, 0, "Source Code Pro");
+        CountdownArtnetController.getInstance();
+        new CountdownController(15, 0, "Courier");
     }
 
     /**

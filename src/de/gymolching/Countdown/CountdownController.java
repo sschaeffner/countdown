@@ -1,5 +1,8 @@
 package de.gymolching.Countdown;
 
+import me.sschaeffner.jArtnet.ArtnetController;
+import me.sschaeffner.jArtnet.packets.ArtDmxPacket;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.Executors;
@@ -96,16 +99,31 @@ public class CountdownController implements InputHandler {
                     this.gui.setTime(this.time);
 
                     if (this.time == 10) {
-                        this.gui.setBackgroundColor(endBackgroundColor);
+                        special();
                     }
 
                 } else {
                     ScheduledFuture s = this.scheduled;
                     this.scheduled = null;
                     s.cancel(true);
+                    off();
                 }
             }, 1, 1, TimeUnit.SECONDS);
         }
+    }
+
+    private void special() {
+        this.gui.setBackgroundColor(endBackgroundColor);
+
+        ArtnetController ac = CountdownArtnetController.getInstance().getAc();
+        ArtDmxPacket p = new ArtDmxPacket((byte)0x0, (byte)0x0, (byte)0x0, (byte)0x0, new byte[]{(byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff});
+        ac.broadcastPacket(p);
+    }
+
+    private void off() {
+        ArtnetController ac = CountdownArtnetController.getInstance().getAc();
+        ArtDmxPacket p = new ArtDmxPacket((byte)0x0, (byte)0x0, (byte)0x0, (byte)0x0, new byte[]{(byte)0x0, (byte)0x0, (byte)0x0, (byte)0x0});
+        ac.broadcastPacket(p);
     }
 
     /**
